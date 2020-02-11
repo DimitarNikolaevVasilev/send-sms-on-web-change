@@ -1,4 +1,4 @@
-//process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0
+process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0
 
 const p = require('node-html-parser');
 const parse = p.parse;
