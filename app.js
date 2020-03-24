@@ -5,6 +5,7 @@ const parse = p.parse;
 
 const rp = require('request-promise');
 const url = process.env.url;
+const fs = require('fs');
 
 const Nexmo = require('nexmo');
 
@@ -12,6 +13,15 @@ const nexmo = new Nexmo({
     apiKey: process.env.nexmo_api_key,
     apiSecret: process.env.nexmo_api_secret
   }, {debug:true});
+
+
+var elements_size;
+try{
+	elements_size = +fs.readFileSync('./elements_size', 'utf8');
+}catch(err){
+	elements_size = 12;
+	fs.writeFileSync('./elements_size', elements_size);
+}
 
 
 function getHTMLElements(parent){
@@ -29,8 +39,11 @@ function go(){
 		var root = parse(html);
 		var docs = root.querySelector('.documents');
 		var size = getHTMLElements(docs);
-		if(size > process.env.elements_size){
-			nexmo.message.sendSms(process.env.msg_title, process.env.msg_phone, process.env.msg_msg);
+		if(size != elements_size){
+			//nexmo.message.sendSms(process.env.msg_title, process.env.msg_phone, process.env.msg_msg);
+			console.log('SENT ' + size);
+			fs.writeFile('./elements_size', size);
+			elements_size = size;
 		}else{
 			console.log(new Date() + ' Nothing new');
 			setTimeout(function(){
@@ -43,5 +56,3 @@ function go(){
 }
 
 go();	
-
-
