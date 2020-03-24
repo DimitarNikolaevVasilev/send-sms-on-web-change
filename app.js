@@ -42,7 +42,7 @@ function go(){
 		if(size != elements_size){
 			//nexmo.message.sendSms(process.env.msg_title, process.env.msg_phone, process.env.msg_msg);
 			console.log('SENT ' + size);
-			fs.writeFile('./elements_size', size);
+			fs.writeFile('./elements_size', size,()=>{});
 			elements_size = size;
 		}else{
 			console.log(new Date() + ' Nothing new');
@@ -55,4 +55,22 @@ function go(){
 	});
 }
 
-go();	
+
+
+setInterval(function() {
+	request("https://send-sms-on-web-change.herokuapp.com/");
+}, 60000 * 10); // every 10 minutes
+
+
+var app = express();
+
+app.get('/', (res, req) => {
+	res.send('OK');
+});
+
+app.listen(process.env.PORT, () => {console.log('LISTENING AT PORT ' + process.env.PORT)});
+
+
+go();
+
+
